@@ -1,5 +1,5 @@
-#DCA sequence scoring
-##Introduction
+# DCA sequence scoring
+## Introduction
 The function of proteins is determined by their amino acid sequence. Mutations in this sequence don't radically change 
 the function, but still alter the protein's properties. Some mutations improve some properties, some are detrimental.
 
@@ -22,8 +22,8 @@ E. De Leonardis, B. Lutz, S. Ratz, S. Cocco, R. Monasson, A. Schug, M. Weigt (20
 "Direct-Coupling Analysis of nucleotide coevolution facilitates RNA secondary and tertiary structure prediction",
 Nucleic acids research, 43(21), 10444-55. 
 ```
-##Usage
-###Basic DCA scoring
+## Usage
+### Basic DCA scoring
 ```python
 from dca import DCAScoreGen
 from utils.sequence_utilities import to_int
@@ -34,7 +34,7 @@ sample_sequence = "MYTVGDYLLDRLHELGIEEIFGVPGDYNLQFLDQIISRKDMKWVGNANELNASYMADGYAR
 score = dca.score(to_int(sample_sequence))
 ```
 Storing the DCAScoreGen instance as a pickle file is recommended to save future computation time.
-###Large scale DCA scoring
+### Large scale DCA scoring
 ```python
 from dca import DCAScoreGen
 from utils.sequence_utilities import to_int
@@ -51,8 +51,8 @@ To be able to use it, the conda package "cudatoolkit" is necessary.
 Windows users might experience errors when not disabling TDR, which restarts the graphics drivers when kernels take 
 longer than 2 seconds. Use utils/disable_TDR.reg and restart to disable it. As alternative, the option to increase the
 time until triggering also exists.
-##Experiment usecases
-###All possible single mutations
-###All possible double mutations
-###Monte carlo method of sequence generation
-###All combinations of all beneficial mutations
+## Experiment usecases
+### All possible single mutations
+### All possible double mutations
+### Monte carlo method of sequence generation
+### All combinations of all beneficial mutations

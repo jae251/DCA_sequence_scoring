@@ -231,7 +231,7 @@ if __name__ == '__main__':
             dca = pickle.load(f)
     else:
         print("Calculating DCA model")
-        dca = DCAScoreGen("data/9C542562-5C10-11E7-AF2C-EEEADBC3747A.3.afa")
+        dca = DCAScoreGen("sample_data/9C542562-5C10-11E7-AF2C-EEEADBC3747A.3.afa")
         with open(os.path.join("tmp", "dca.pickle"), "wb") as f:
             pickle.dump(dca, f)
     t2 = time()

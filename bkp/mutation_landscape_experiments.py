@@ -40,8 +40,6 @@ def investigate_double_mutation_synergy(seq, scoring_function, single_mutations_
                 sequences = []
                 single_scores_added = []
                 mutations = []
-                # if i > 70000:
-                #     break
             if i % 10 == 0:
                 bar.update(i)
         sequences = np.array(sequences)
@@ -55,6 +53,7 @@ def investigate_double_mutation_synergy(seq, scoring_function, single_mutations_
         # results.append(batch_result)
         # results = np.vstack(results)
     # return results
+    return "tmp/double_mutations"
 
 
 def investigate_mutational_landscape_biased(seq, scoring_function, single_mutations_scores,

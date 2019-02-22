@@ -17,28 +17,41 @@ def visualize_score_by_mutation_nr(scores, nr_of_mutations, path=None):
     plt.clf()
 
 
-def visualize_mutation_synergy(results, path=None):
+def visualize_double_mutations(results, path_histogram=None, path_heatmap=None):
     import seaborn as sns
     import matplotlib.pylab as plt
-    # max_pos = int(max(np.max(results[:, 0]), np.max(results[:, 2])))
-    # max_res = int(max(np.max(results[:, 1]), np.max(results[:, 3])))
-    # dim = max_pos * max_res + 1
-    dim = 547
-    interaction_matrix = np.zeros((dim, dim))
-    for p1, r1, p2, r2, _, c in results:
-        p1, p2 = int(p1), int(p2)
-        # interaction_matrix[int(p1) * max_res + int(r1), int(p2) * max_res + int(r2)] = c
-        pointer = interaction_matrix[p1, p2]
-        if pointer < c or pointer == 0:
-            interaction_matrix[p1, p2] = c
-    print("Heatmap matrix filled")
-    ax = sns.heatmap(interaction_matrix)  # , linewidth=0.1)
-    ax.set_title("Highest synergy scores for mutation pairs")
-    if path is None:
+    results = np.array(results)
+    print("Loaded data")
+
+    scores = results[:, -2]
+    results[:, -1] = scores - scores / results[:, -1]
+
+    g = sns.distplot(results[:, -1], kde=False)
+    g.set_yscale("log")
+    if path_histogram is None:
         plt.show()
     else:
-        plt.savefig(path)
-        print("Saved pairwise mutation synergy plot under ", path)
+        plt.savefig(path_histogram)
+        print("Saved score difference histogram under ", path_histogram)
+    plt.clf()
+
+    dim = 547
+    interaction_matrix = np.zeros((dim, dim, 2))
+    for p1, r1, p2, r2, score, score_diff in results:
+        p1, p2 = int(p1), int(p2)
+        pointer = interaction_matrix[p1, p2]
+        if pointer[1] > score or pointer[1] == 0:
+            interaction_matrix[p1, p2] = score_diff, score
+            interaction_matrix[p2, p1] = score_diff, score
+    print("Heatmap matrix filled")
+    score_differences = interaction_matrix[:, :, 0]
+    g = sns.heatmap(score_differences, cmap=sns.diverging_palette(500, 10, sep=1, n=200), center=0)
+    g.invert_yaxis()
+    if path_heatmap is None:
+        plt.show()
+    else:
+        plt.savefig(path_heatmap)
+        print("Saved score difference heatmap under ", path_heatmap)
     plt.clf()
 
 

@@ -5,24 +5,22 @@ from h5py import File
 
 from utils.mutation_generators import BiasedRandomMutationsGenerator
 from investigate_single_mutations import investigate_single_mutations
-from utils.visualizations import visualize_mutation_synergy
+from utils.visualizations import visualize_double_mutations
 
-TMP_PATH = "../tmp/double_mutations"
+cache_file = "../tmp/double_mutations.hdf5"
 
 
 def investigate_double_mutations(seq, scoring_function, single_mutations_scores):
     print("Calculating double mutations")
-    if not os.path.isdir(TMP_PATH):
-        os.mkdir(TMP_PATH)
-    if os.listdir(TMP_PATH) != []:
-        print("Previous results found in " + TMP_PATH + ", skipping calculation")
+    if os.path.isfile(cache_file):
+        print("Previous results found in " + cache_file + ", skipping calculation")
     else:
         generate_mutations = BiasedRandomMutationsGenerator(seq, single_mutations_scores,
                                                             mutation_pool_cutoff=len(single_mutations_scores),
                                                             max_nr_of_mutations_per_seq=2)
         with ProgressBar(max_value=generate_mutations.max_nr_of_seq) as bar:
             df = None
-            with File("../tmp/double_mutations.hdf5", "w") as f:
+            with File(cache_file, "w") as f:
                 sequences = []
                 mutations = []
                 single_scores_added = []
@@ -39,8 +37,7 @@ def investigate_double_mutations(seq, scoring_function, single_mutations_scores)
                         single_scores_added = np.array(single_scores_added)
                         mutations = np.vstack(mutations)
                         scores = scoring_function(sequences)
-                        synergy_coefficient = scores / single_scores_added
-                        batch_result = np.hstack((mutations, scores[:, np.newaxis], synergy_coefficient[:, np.newaxis]))
+                        batch_result = np.hstack((mutations, scores[:, np.newaxis], single_scores_added[:, np.newaxis]))
                         if df is None:
                             df = f.create_dataset("results", data=batch_result, maxshape=(None, 6))
                         else:
@@ -64,13 +61,13 @@ def investigate_double_mutations(seq, scoring_function, single_mutations_scores)
                     data_size = len(batch_result)
                     df.resize(len(df) + data_size, axis=0)
                     df[-data_size:] = batch_result
-    results_hdf = File("../tmp/double_mutations.hdf5", "r")
+    results_hdf = File(cache_file, "r")
     results = results_hdf["results"]
     return results
 
 
 if __name__ == '__main__':
-    if os.listdir(TMP_PATH) == []:
+    if not os.path.isfile(cache_file):
         from dca import DCAScoreGen
         import pickle
 
@@ -92,4 +89,5 @@ if __name__ == '__main__':
         m2_scores = investigate_double_mutations(dca.org_seq, dca.score_gpu, m1_scores)
     else:
         m2_scores = investigate_double_mutations(None, None, None)
-    visualize_mutation_synergy(m2_scores, "../plots/double_mutations_synergy_heatmap.png")
+    visualize_double_mutations(m2_scores, "../plots/double_mutations_score_difference_histogram.png",
+                               "../plots/double_mutations_score_difference_heatmap.png")

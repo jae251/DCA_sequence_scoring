@@ -55,7 +55,7 @@ time until triggering also exists.
 The aim of the experiments was to find mutations that improve properties of the initial sequence.
 Due to the vast possibility space of this problem multiple approaches were taken.
 
-All experiment scripts lay in the "experiments" folder. Simply start them by invoking the scripts. 
+All experiment scripts lie in the "experiments" folder. Simply start them by invoking the scripts. 
 Resulting plots will appear in the folder "plots".
 ```bash
 cd experiments
@@ -71,15 +71,24 @@ All sequences with one mutation to the initial sequence were scored. Only a mino
 
 ### All possible double mutations
 The GPU implementation of the scoring function makes it possible to score all 59,732,400 double mutations under four hours.
-Dividing the resulting score of each sample by the sum of the scores of their comprised single mutations yields a synergy coefficient.
-The highest synergy coefficient for each position pair is plotted in this heatmap:  
-![Double mutations synergy coefficient heatmap](plots/double_mutation_synergy_heatmap.png "The highest synergy coefficients of all double mutations")
+The difference between these mutation scores and the sum of the two comprising single mutations' scores
+can be a measure for the synergy between the mutations.
+
+The histogram of these differences (negative values mean stronger negative DCA score of double mutation):
+
+![Double mutation score difference histogram](plots/double_mutations_score_difference_histogram.png "Double mutation score difference histogram")
+
+The following heatmap shows the magnitude of these differences for the best scores of a given position pair:
+
+![Score difference heatmap for best double mutations](plots/double_mutations_score_difference_heatmap.png "Score difference heatmap for best double mutations")
 
 ### Monte carlo method of sequence generation
 Randomly sampling all possible mutations gives us a picture of the overall trend for multiple mutations:
+
 ![Monte carlo mutation sampling](plots/monte_carlo_sampling.png "All possible mutations sampled randomly")
 
 ### All combinations of all beneficial mutations
 The subset of all single mutations with negative DCA score and therefore deemed beneficial is small enough that it
 is feasible to calculate the scores of all their possible combinations:
+
 ![Combinations of beneficial single mutations](plots/best_mutation_combinations.png "All possible combinations of single mutations with negative DCA-score")
